@@ -1,0 +1,32 @@
+ ###############################################################################
+ # id3org
+ # Copyright (C) 2011 Robert Bieber
+ #
+ # This program is free software: you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation, either version 3 of the License, or
+ # (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ #
+ ###############################################################################
+
+This is a pretty straightforward Python script, you just run it with the root 
+of your music directory as the single command-line argument and it organizes 
+and transcodes everything as necessary.
+
+The program will replicate my personal preferred music directory structure, so 
+it may or may not be useful to you.  MP3 and FLAC files are identified as 
+source files, and copied into
+        base_dir/src/Artist Name/Album Name/##-Track Name.ext
+Corresponding down-converted ogg files will be located at 
+        base_dir/ogg/Artist Name/Album Name/##-Track Name.ogg
+and if they're not already present the script will create them.  It depends on 
+mpg321, flac and oggenc for the conversion, and also requires the Python 
+library Mutagen for metadata retrieval.
