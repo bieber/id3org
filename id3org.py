@@ -98,6 +98,7 @@ for f in source_files:
     # Moving the file if the path isn't correct
     if src_path != f['path']:
         os.renames(f['path'], src_path)
+        f['path'] = src_path
 
     # Building a list of files to convert
     if not os.path.exists(ogg_path):
