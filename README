@@ -17,16 +17,24 @@
  #
  ###############################################################################
 
-This is a pretty straightforward Python script, you just run it with the root 
-of your music directory as the single command-line argument and it organizes 
-and transcodes everything as necessary.
+This is a pretty straightforward Python script, you just run it with
+the root of your music directory as the single command-line argument
+and it organizes and transcodes everything as necessary.
 
-The program will replicate my personal preferred music directory structure, so 
-it may or may not be useful to you.  MP3 and FLAC files are identified as 
-source files, and copied into
-        base_dir/src/Artist Name/Album Name/##-Track Name.ext
-Corresponding down-converted ogg files will be located at 
-        base_dir/ogg/Artist Name/Album Name/##-Track Name.ogg
-and if they're not already present the script will create them.  It depends on 
-mpg321, flac and oggenc for the conversion, and also requires the Python 
-library Mutagen for metadata retrieval.
+The program will replicate my personal preferred music directory
+structure, so it may or may not be useful to you.  MP3 and FLAC files
+are identified as source files, and copied into
+
+    base_dir/src/Artist Name/Album Name/##-Track Name.ext
+
+Corresponding down-converted ogg files will be located at
+
+    base_dir/ogg/Artist Name/Album Name/##-Track Name.ogg
+
+and MP3 files at
+
+    base_dir/mp3/Artist Name/Album Name/##-Track Name.mp3
+
+and if they're not already present the script will create them.  It
+depends on mpg321, flac, oggenc and lame for the conversion, and also
+requires the Python library Mutagen for metadata retrieval.

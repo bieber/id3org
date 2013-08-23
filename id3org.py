@@ -69,7 +69,6 @@ def process_dir(out_list, directory, files):
             out_data['song_path'] = song_path
             out_data['song_name'] = song_name
             out_list.append(out_data)
-                    
 
 if len(sys.argv) != 2 or not os.path.isdir(sys.argv[1]):
     sys.exit("usage: id3org.py base-dir")
@@ -81,6 +80,7 @@ os.path.walk(sys.argv[1], process_dir, source_files)
 
 print 'Moving files...'
 convert_files = []
+to_convert = 0
 for f in source_files:
     # Calculating ideal paths
     src_path = os.path.join(sys.argv[1], 
@@ -94,6 +94,12 @@ for f in source_files:
                             f['song_path'],
                             "%s.ogg" % f['song_name']).encode('ascii',
                                                               'ignore')
+                                                              
+    mp3_path = os.path.join(sys.argv[1],
+                            'mp3',
+                            f['song_path'],
+                            "%s.mp3" % f['song_name']).encode('ascii',
+                                                              'ignore')
 
     # Moving the file if the path isn't correct
     if src_path != f['path']:
@@ -103,9 +109,14 @@ for f in source_files:
     # Building a list of files to convert
     if not os.path.exists(ogg_path):
         f['ogg_path'] = ogg_path
+        to_convert += 1
+    if not os.path.exists(mp3_path):
+        f['mp3_path'] = mp3_path
+        to_convert += 1
+    if not os.path.exists(ogg_path) or not os.path.exists(mp3_path):
         convert_files.append(f)
 
-print "Converting %d files..." % len(convert_files)
+print "Converting %d files..." % to_convert
 for i in range(0, len(convert_files)):
     f = convert_files[i]
     # First decode to a wav file
@@ -118,15 +129,29 @@ for i in range(0, len(convert_files)):
     else:
         continue # This should never occur
     
-    # Then encode as ogg
-    os.system(('oggenc -o "%s" -N "%s" -t "%s" -l "%s" -a "%s" -G "%s" ' + 
-               '-d "%s" .id3org_temp.wav') % (f['ogg_path'], 
-                                              escape_metadata(f['tracknumber']),
-                                              escape_metadata(f['title']),
-                                              escape_metadata(f['album']),
-                                              escape_metadata(f['artist']),
-                                              escape_metadata(f['genre']),
-                                              escape_metadata(f['date'])))
+    # Then encode as ogg and/or MP3
+    if 'ogg_path' in f:
+        os.system(('oggenc -o "%s" -N "%s" -t "%s" -l "%s" -a "%s" -G "%s" ' + 
+                   '-d "%s" .id3org_temp.wav') % 
+                   (f['ogg_path'], 
+                    escape_metadata(f['tracknumber']),
+                    escape_metadata(f['title']),
+                    escape_metadata(f['album']),
+                    escape_metadata(f['artist']),
+                    escape_metadata(f['genre']),
+                    escape_metadata(f['date'])))
+    if 'mp3_path' in f:
+        if not os.path.exists(os.path.dirname(f['mp3_path'])):
+            os.makedirs(os.path.dirname(f['mp3_path']))
+        os.system(('lame -b 256 -h --tn %s --tt "%s" --tl "%s" --ta "%s" ' +
+                   '--tg "%s" --ty "%s" .id3org_temp.wav "%s"') %
+                  (escape_metadata(f['tracknumber']),
+                   escape_metadata(f['title']),
+                   escape_metadata(f['album']),
+                   escape_metadata(f['artist']),
+                   escape_metadata(f['genre']),
+                   escape_metadata(f['date']),
+                   f['mp3_path']))
                                 
     os.remove('.id3org_temp.wav')
     print 'Converted file %d/%d...' % (i + 1, len(convert_files))
